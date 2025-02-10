@@ -1,0 +1,11 @@
+---
+# handlers file for devops-demo
+- name: restart nginx 
+  service:
+    name: nginx
+    state: restarted
+
+- name: restart mysql
+  service:
+    name: mysql
+    state: restarted

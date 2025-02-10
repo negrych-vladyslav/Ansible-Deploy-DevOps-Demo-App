@@ -1,0 +1,7 @@
+---
+- name: Deploy devops-demo 
+  hosts: all
+  become: yes
+
+  roles:
+   - devops-demo

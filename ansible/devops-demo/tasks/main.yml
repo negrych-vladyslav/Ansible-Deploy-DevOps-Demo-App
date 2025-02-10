@@ -1,0 +1,84 @@
+---
+# tasks file for devops-demo
+- name: Install packages
+  apt: 
+   name: "{{ item }}"
+   state: latest
+  loop:
+     - nginx
+     - default-mysql-server
+     - php
+     - php-fpm
+     - php-mysql
+     - git
+     - pip
+
+- name: Make sure pymysql is present
+  pip:
+    name: pymysql
+    state: present
+
+- name: Clone project 
+  ansible.builtin.git:
+    repo: "{{ git_repo }}"             
+    dest: "{{ repo_path }}"
+    force: yes
+
+- name: Create app directory
+  file:
+   path: /var/www/app
+   state: directory
+  
+- name: Extract files from devops-demo.tar.gz
+  ansible.builtin.unarchive:
+    src: "{{ repo_path }}/devops-demo.tar.gz"
+    dest: /var/www/app
+    remote_src: yes
+
+- name: Edit config.ini
+  template:
+     src: config.j2
+     dest: /var/www/app/config.ini
+
+- name: Set root user password
+  mysql_user:
+    name: root
+    password: "{{ mysql_password}}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    check_implicit_admin: true
+
+- name: Create a new database  
+  mysql_db: 
+    name: "{{ db_name }}" 
+    state: present 
+    login_user: "{{ db_user }}" 
+    login_password: "{{ mysql_password }}"  
+    login_host: localhost
+  
+- name: Insert data into database  
+  mysql_db: 
+    name: "{{ db_name }}" 
+    state: import target=/home/user/app-demo/devops-demo.sql 
+    login_user: "{{ db_user }}" 
+    login_password: "{{ mysql_password }}"
+  notify: restart mysql
+  ignore_errors: yes
+
+- name: Delete all nginx config
+  shell: "rm {{ item }}"
+  loop:
+      - "/etc/nginx/sites-available/*"
+      - "/etc/nginx/sites-enabled/*"
+
+- name: Copy nginx config
+  copy:
+   src: app-demo.conf
+   dest: /etc/nginx/sites-available
+
+- name: Create symbolic link
+  file:
+   src: /etc/nginx/sites-available/app-demo.conf
+   dest: /etc/nginx/sites-enabled/app-demo.conf
+   state: link
+   force: yes
+  notify: restart nginx

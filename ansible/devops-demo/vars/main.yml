@@ -1,0 +1,8 @@
+---
+# vars file for devops-demo
+git_repo: "https://github.com/devopsdemoapps/devops-demo.git"
+repo_path: "/home/user/app-demo"
+mysql_password:
+db_name: 
+db_user:
+db_host: localhost
