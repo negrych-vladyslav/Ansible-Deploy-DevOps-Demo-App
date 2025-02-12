@@ -24,6 +24,7 @@ jobs:
       - name: Setup become password file
         run: |
           echo "${{ secrets.BECOME_PASS }}" > become-pass.txt
+          chmod 600 become-pass.txt
 
       - name: Download Ansible
         run: |
