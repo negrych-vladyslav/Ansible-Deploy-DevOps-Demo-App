@@ -1,0 +1,9 @@
+[servers]
+srv1	ansible_hosts=192.168.122.165		
+srv2	ansible_hosts=192.168.122.38	
+
+[load_balancer]
+lb      ansible_hosts=192.168.122.180
+
+
+

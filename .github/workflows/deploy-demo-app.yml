@@ -1,0 +1,35 @@
+name: Deploy-Demo-App
+
+on:
+  push:
+    branches: [ "main" ]
+  
+
+  workflow_dispatch:
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
+      - name: Setup SSH
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private-key.pem
+          chmod 600 private-key.pem
+
+      - name: Download Ansible
+        run: |
+          sudo apt update
+          sudo apt install -y ansible
+
+      - name: Run Ansible Playbook
+        env: 
+           ANSIBLE_USER             : ${{ secrets.ANSIBLE_USER }}
+           ANSIBLE_HOST_KEY_CHECKING: false
+        run: |
+          ansible-playbook -i inventory/hosts ansible/app-demo.yml --private-key private-key.pem -u ${{ secrets.ANSIBLE_USER }}
+          
