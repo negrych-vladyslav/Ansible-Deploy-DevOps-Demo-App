@@ -27,7 +27,7 @@ jobs:
           chmod 600 become-pass.txt
 
       - name: Test SSH
-        run: ssh ${{ secrets.ANSIBLE_USER }}@192.168.122.165
+        run: ssh user@192.168.122.165
 
       - name: Download Ansible
         run: |
