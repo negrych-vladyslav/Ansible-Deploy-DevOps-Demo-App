@@ -26,13 +26,14 @@ jobs:
           echo "${{ secrets.BECOME_PASS }}" > become-pass.txt
           chmod 600 become-pass.txt
 
+      - name: Test SSH
+        run: ssh ${{ secrets.ANSIBLE_USER }}@192.168.122.165
+
       - name: Download Ansible
         run: |
           sudo apt update
           sudo apt install -y ansible
 
-      - name: Test SSH
-        run: ssh -i private-key.pem ${{ secrets.ANSIBLE_USER }}@192.168.122.165
 
       - name: Run Ansible Playbook
         env: 
