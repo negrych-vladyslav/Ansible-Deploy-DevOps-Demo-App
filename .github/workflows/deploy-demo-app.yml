@@ -36,5 +36,5 @@ jobs:
            ANSIBLE_USER             : ${{ secrets.ANSIBLE_USER }}
            ANSIBLE_HOST_KEY_CHECKING: false
         run: |
-          ansible-playbook -vvv -i ansible/inventory/hosts --private-key private-key.pem -u user --become-password-file become-pass.txt ansible/app-demo.yml
+          ansible-playbook -vvv -i ansible/inventory/hosts --private-key private-key.pem -u user --extra-vars='ansible_become_pass=${{ secrets.BECOME_PASS }} ansible/app-demo.yml
           
